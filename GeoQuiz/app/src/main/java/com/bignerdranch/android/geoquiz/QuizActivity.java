@@ -1,11 +1,11 @@
 package com.bignerdranch.android.geoquiz;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.bignerdranch.android.geoquiz.databinding.ActivityQuizBinding;
@@ -13,8 +13,7 @@ import com.bignerdranch.android.geoquiz.databinding.ActivityQuizBinding;
 public class QuizActivity extends AppCompatActivity {
 	private static final String TAG = "QuizActivity";
 	private static final String QUESTION_INDEX_KEY = "QUESTION_INDEX_KEY";
-
-	Button falseButton;
+	private static final int REQUEST_CODE_CHEAT = 255;
 
 	private Question[] questions = new Question[]{
 			new Question(R.string.question_oceans, true),
@@ -35,17 +34,14 @@ public class QuizActivity extends AppCompatActivity {
 			currentQuestion = savedInstanceState.getInt(QUESTION_INDEX_KEY, 0);
 		}
 		Log.d(TAG, "onCreate(Bundle) called");
-		setContentView(R.layout.activity_quiz);
-		falseButton = (Button) findViewById(R.id.false_button);
-
 		binding = (ActivityQuizBinding) DataBindingUtil.setContentView(this, R.layout.activity_quiz);
-		binding.setQuestion(questions[currentQuestion]);
+		binding.setQuestion(currentQuestion());
 		binding.setHandler(this);
 	}
 
 	public void onAnswerClick(View button) {
 		boolean correct =
-				(button == falseButton ^ questions[currentQuestion].isAnswerTrue());
+				(button == binding.falseButton ^ currentQuestion().isAnswerTrue());
 
 		Toast.makeText(this, correct ? R.string.correct_toast : R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
 	}
@@ -61,43 +57,33 @@ public class QuizActivity extends AppCompatActivity {
 	}
 
 	private void updateQuestionInView() {
-		binding.setQuestion(questions[currentQuestion]);
+		binding.setQuestion(currentQuestion());
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		Log.d(TAG, "onStart() called");
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-
-		Log.d(TAG, "onStart() called");
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Log.d(TAG, "onResume() called");
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		Log.d(TAG, "onStop() called");
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		Log.d(TAG, "onDestroy() called");
+	private Question currentQuestion() {
+		return questions[currentQuestion];
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(QUESTION_INDEX_KEY, currentQuestion);
+	}
+
+	public void onCheatClicked(View cheatView) {
+		startActivityForResult(CheatActivity.newIntent(this, currentQuestion()), REQUEST_CODE_CHEAT);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == REQUEST_CODE_CHEAT) {
+			if (data == null) {
+				return;
+			}
+
+			Toast.makeText(this, R.string.judgement_toast, Toast.LENGTH_SHORT).show();
+		}
 	}
 }
