@@ -4,23 +4,16 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.bignerdranch.android.geoquiz.databinding.ActivityQuizBinding;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class QuizActivity extends AppCompatActivity {
-
 	private static final String TAG = "QuizActivity";
+	private static final String QUESTION_INDEX_KEY = "QUESTION_INDEX_KEY";
 
-	@BindView(R.id.true_button)
-	Button trueButton;
-
-	@BindView(R.id.false_button)
 	Button falseButton;
 
 	private Question[] questions = new Question[]{
@@ -37,29 +30,32 @@ public class QuizActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (savedInstanceState != null) {
+			currentQuestion = savedInstanceState.getInt(QUESTION_INDEX_KEY, 0);
+		}
 		Log.d(TAG, "onCreate(Bundle) called");
 		setContentView(R.layout.activity_quiz);
-		ButterKnife.bind(this);
-		binding = (ActivityQuizBinding)DataBindingUtil.setContentView(this, R.layout.activity_quiz);
-		binding.setQuestion(questions[0]);
+		falseButton = (Button) findViewById(R.id.false_button);
+
+		binding = (ActivityQuizBinding) DataBindingUtil.setContentView(this, R.layout.activity_quiz);
+		binding.setQuestion(questions[currentQuestion]);
+		binding.setHandler(this);
 	}
 
-	@OnClick({R.id.true_button, R.id.false_button})
-	public void onAnswerClick(Button button) {
+	public void onAnswerClick(View button) {
 		boolean correct =
 				(button == falseButton ^ questions[currentQuestion].isAnswerTrue());
 
 		Toast.makeText(this, correct ? R.string.correct_toast : R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
 	}
 
-	@OnClick(R.id.previous_button)
-	public void onPreviousButtonClick(Button button) {
+	public void onPreviousButtonClick(View button) {
 		currentQuestion = (currentQuestion + questions.length - 1) % questions.length;
 		updateQuestionInView();
 	}
 
-	@OnClick(R.id.next_button)
-	public void onNextButtonClick(Button button) {
+	public void onNextButtonClick(View button) {
 		currentQuestion = (currentQuestion + 1) % questions.length;
 		updateQuestionInView();
 	}
@@ -77,6 +73,7 @@ public class QuizActivity extends AppCompatActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+
 		Log.d(TAG, "onStart() called");
 	}
 
@@ -96,5 +93,11 @@ public class QuizActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		Log.d(TAG, "onDestroy() called");
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(QUESTION_INDEX_KEY, currentQuestion);
 	}
 }

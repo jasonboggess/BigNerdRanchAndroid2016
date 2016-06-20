@@ -5,69 +5,69 @@
     <data>
 
         <variable
+            name="handler"
+            type="com.bignerdranch.android.geoquiz.QuizActivity"/>
+
+        <variable
             name="question"
             type="com.bignerdranch.android.geoquiz.Question"/>
     </data>
 
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:orientation="vertical"
         tools:context="com.bignerdranch.android.geoquiz.QuizActivity">
 
+        <TextView
+            android:id="@+id/question_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:text="@{question.questionTextId}"/>
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/question_text_view"
+            <Button
+                android:id="@+id/true_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="24dp"
-                android:text="@{question.questionTextId}"/>
+                android:onClick="@{handler.onAnswerClick}"
+                android:text="@string/true_button"/>
 
-            <LinearLayout
+            <Button
+                android:id="@+id/false_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/true_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/true_button"/>
-
-                <Button
-                    android:id="@+id/false_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/false_button"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/previous_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/arrow_left"
-                    android:text="@string/previous_button"/>
-
-                <Button
-                    android:id="@+id/next_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/arrow_right"
-                    android:text="@string/next_button"/>
-            </LinearLayout>
+                android:onClick="@{handler.onAnswerClick}"
+                android:text="@string/false_button"/>
         </LinearLayout>
-    </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/previous_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/arrow_left"
+                android:onClick="@{handler.onPreviousButtonClick}"
+                android:text="@string/previous_button"/>
+
+            <Button
+                android:id="@+id/next_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/arrow_right"
+                android:onClick="@{handler.onNextButtonClick}"
+                android:text="@string/next_button"/>
+        </LinearLayout>
+    </LinearLayout>
 </layout>
