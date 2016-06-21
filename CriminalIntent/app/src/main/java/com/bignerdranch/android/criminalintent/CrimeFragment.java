@@ -10,17 +10,30 @@ import android.view.ViewGroup;
 
 import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeBinding;
 
+import java.util.UUID;
+
 /**
  * Created by jboggess on 6/21/16.
  */
 public class CrimeFragment extends Fragment {
 
 	private Crime crime;
+	private static final String ARGUMENT_CRIME_ID = "crime_id";
+
+	public static CrimeFragment newInstance(UUID crimeId) {
+		Bundle bundle = new Bundle();
+		bundle.putSerializable(ARGUMENT_CRIME_ID, crimeId);
+
+		CrimeFragment fragment = new CrimeFragment();
+		fragment.setArguments(bundle);
+		return fragment;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		crime = new Crime();
+		UUID crimeId = (UUID) getArguments().getSerializable(ARGUMENT_CRIME_ID);
+		crime = CrimeLab.getInstance(getActivity()).getCrime(crimeId);
 	}
 
 	@Nullable

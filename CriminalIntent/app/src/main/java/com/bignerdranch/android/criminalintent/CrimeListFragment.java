@@ -1,6 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeListBinding;
 import com.bignerdranch.android.criminalintent.databinding.ListItemCrimeBinding;
@@ -36,7 +36,8 @@ public class CrimeListFragment extends Fragment {
 
 		public void onClick(View view) {
 			Crime crime = listItemCrimeBinding.getCrime();
-			Toast.makeText(getActivity(), crime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+			Intent intent = CrimeActivity.newIntent(getActivity(), crime.getId());
+			startActivity(intent);
 		}
 	}
 
