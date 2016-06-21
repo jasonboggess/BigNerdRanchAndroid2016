@@ -6,6 +6,7 @@
         <variable
             name="crime"
             type="com.bignerdranch.android.criminalintent.Crime"/>
+        <import type="com.bignerdranch.android.criminalintent.DateUtils" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,7 +44,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:text="@{crime.date.toString()}"
+            android:text="@{DateUtils.formatDate(crime.date)}"
             />
 
         <CheckBox
