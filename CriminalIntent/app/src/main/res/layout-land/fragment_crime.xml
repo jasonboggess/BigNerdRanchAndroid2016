@@ -36,17 +36,7 @@
             android:layout_height="wrap_content"
             android:text="@string/crime_details_label"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:text="@{crime.date.toString()}"
-            />
-
-        <CheckBox
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -54,8 +44,23 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:text="@string/crime_solved_label"
-            android:checked="@={crime.solved}"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{crime.date.toString()}"
+                />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:checked="@={crime.solved}"
+                android:text="@string/crime_solved_label"/>
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
