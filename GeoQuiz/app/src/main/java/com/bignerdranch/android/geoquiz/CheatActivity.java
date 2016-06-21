@@ -29,8 +29,8 @@ public class CheatActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		binding = (ActivityCheatBinding) DataBindingUtil.setContentView(this, R.layout.activity_cheat);
-		binding.setActionHandler(this);
+		binding = (ActivityCheatBinding) DataBindingUtil.setContentView(CheatActivity.this, R.layout.activity_cheat);
+		binding.setActionHandler(CheatActivity.this);
 
 		boolean answer = getIntent().getBooleanExtra(CHEAT_QUESTION_ANSWER_KEY, false);
 		int questionTextId = getIntent().getIntExtra(CHEAT_QUESTION_TEXT_KEY, 0);
@@ -38,7 +38,7 @@ public class CheatActivity extends AppCompatActivity {
 		isAnswerShowing.set(false);
 
 		binding.setQuestion(question);
-		binding.setActionHandler(this);
+		binding.setActionHandler(CheatActivity.this);
 
 		buildVersion.set(String.format("API Level %d", Build.VERSION.SDK_INT));
 	}

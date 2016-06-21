@@ -34,16 +34,16 @@ public class QuizActivity extends AppCompatActivity {
 			currentQuestion = savedInstanceState.getInt(QUESTION_INDEX_KEY, 0);
 		}
 		Log.d(TAG, "onCreate(Bundle) called");
-		binding = (ActivityQuizBinding) DataBindingUtil.setContentView(this, R.layout.activity_quiz);
+		binding = (ActivityQuizBinding) DataBindingUtil.setContentView(QuizActivity.this, R.layout.activity_quiz);
 		binding.setQuestion(currentQuestion());
-		binding.setHandler(this);
+		binding.setHandler(QuizActivity.this);
 	}
 
 	public void onAnswerClick(View button) {
 		boolean correct =
 				(button == binding.falseButton ^ currentQuestion().isAnswerTrue());
 
-		Toast.makeText(this, correct ? R.string.correct_toast : R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
+		Toast.makeText(QuizActivity.this, correct ? R.string.correct_toast : R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
 	}
 
 	public void onPreviousButtonClick(View button) {
@@ -71,7 +71,7 @@ public class QuizActivity extends AppCompatActivity {
 	}
 
 	public void onCheatClicked(View cheatView) {
-		startActivityForResult(CheatActivity.newIntent(this, currentQuestion()), REQUEST_CODE_CHEAT);
+		startActivityForResult(CheatActivity.newIntent(QuizActivity.this, currentQuestion()), REQUEST_CODE_CHEAT);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class QuizActivity extends AppCompatActivity {
 				return;
 			}
 
-			Toast.makeText(this, R.string.judgement_toast, Toast.LENGTH_SHORT).show();
+			Toast.makeText(QuizActivity.this, R.string.judgement_toast, Toast.LENGTH_SHORT).show();
 		}
 	}
 }
