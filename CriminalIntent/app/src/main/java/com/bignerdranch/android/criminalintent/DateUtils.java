@@ -12,6 +12,9 @@ public class DateUtils {
 	private final static DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy H:mm a");
 
 	public static String formatDate(Date date) {
+		if (date == null) {
+			return "";
+		}
 		return dateFormat.format(date);
 	}
 }
