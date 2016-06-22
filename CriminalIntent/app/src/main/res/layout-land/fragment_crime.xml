@@ -67,6 +67,19 @@
                 android:text="@string/crime_solved_label"/>
         </LinearLayout>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="right"
+            android:onClick="@{eventHandler.onDeleteButtonClicked}"
+            android:text="@string/delete_crime"
+            />
+
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -6,10 +6,12 @@
         <variable
             name="crime"
             type="com.bignerdranch.android.criminalintent.Crime"/>
+
         <variable
             name="eventHandler"
-            type="com.bignerdranch.android.criminalintent.CrimeFragment" />
-        <import type="com.bignerdranch.android.criminalintent.DateUtils" />
+            type="com.bignerdranch.android.criminalintent.CrimeFragment"/>
+
+        <import type="com.bignerdranch.android.criminalintent.DateUtils"/>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -47,8 +49,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:text="@{DateUtils.formatDate(crime.date)}"
             android:onClick="@{eventHandler.onDateButtonClick}"
+            android:text="@{DateUtils.formatDate(crime.date)}"
             />
 
         <CheckBox
@@ -59,8 +61,20 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:text="@string/crime_solved_label"
-            android:checked="@={crime.solved}"/>
+            android:checked="@={crime.solved}"
+            android:text="@string/crime_solved_label"/>
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:onClick="@{eventHandler.onDeleteButtonClicked}"
+            android:text="@string/delete_crime"
+            />
 
         <TextView
             android:layout_width="wrap_content"

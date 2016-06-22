@@ -1,8 +1,10 @@
 package com.bignerdranch.android.criminalintent;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -58,6 +60,24 @@ public class CrimeFragment extends Fragment {
 		DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(crime.getDate());
 		datePickerFragment.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
 		datePickerFragment.show(fragmentManager, DIALOG_DATE);
+	}
+
+	public void onDeleteButtonClicked(View view) {
+		new AlertDialog.Builder(getActivity())
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setTitle("Delete")
+				.setMessage("Are you sure you want to delete this crime?")
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						CrimeLab.getInstance(CrimeFragment.this.getActivity()).deleteCrime(crime);
+						CrimeFragment.this.getActivity().finish();
+					}
+
+				})
+				.setNegativeButton("No", null)
+				.show();
+
 	}
 
 	@Override

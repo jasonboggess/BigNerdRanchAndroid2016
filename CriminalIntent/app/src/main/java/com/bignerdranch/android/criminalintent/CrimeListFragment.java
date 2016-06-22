@@ -89,6 +89,7 @@ public class CrimeListFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		binding = (FragmentCrimeListBinding) DataBindingUtil.inflate(inflater, R.layout.fragment_crime_list, container, false);
+		binding.setCrimes(CrimeLab.getInstance(getActivity()).getCrimes());
 		binding.crimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 		if (savedInstanceState != null) {
 			subtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
@@ -154,7 +155,7 @@ public class CrimeListFragment extends Fragment {
 		CrimeLab crimeLab = CrimeLab.getInstance(getActivity());
 		int crimeCount = crimeLab.getCrimes().size();
 
-		String subtitle = getString(R.string.subtitle_format, crimeCount);
+		String subtitle = getResources().getQuantityString(R.plurals.subtitle_plural, crimeCount, crimeCount);
 		if (!subtitleVisible) {
 			subtitle = null;
 		}
