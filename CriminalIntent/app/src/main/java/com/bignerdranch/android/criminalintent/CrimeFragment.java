@@ -1,6 +1,9 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeBinding;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -19,6 +23,8 @@ public class CrimeFragment extends Fragment {
 
 	private Crime crime;
 	private static final String ARGUMENT_CRIME_ID = "crime_id";
+	private static final String DIALOG_DATE = "dialog_date";
+	private static final int REQUEST_DATE = 0;
 
 	public static CrimeFragment newInstance(UUID crimeId) {
 		Bundle bundle = new Bundle();
@@ -43,6 +49,26 @@ public class CrimeFragment extends Fragment {
 		View view = binding.getRoot();
 
 		binding.setCrime(crime);
+		binding.setEventHandler(this);
 		return view;
+	}
+
+	public void onDateButtonClick(View view) {
+		FragmentManager fragmentManager = getFragmentManager();
+		DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(crime.getDate());
+		datePickerFragment.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+		datePickerFragment.show(fragmentManager, DIALOG_DATE);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != Activity.RESULT_OK) {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+
+		if (requestCode == REQUEST_DATE) {
+			Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+			crime.setDate(date);
+		}
 	}
 }

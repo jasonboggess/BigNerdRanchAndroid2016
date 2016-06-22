@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class DateUtils {
 
-	private final static DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy H:mm a");
+	private final static DateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 
 	public static String formatDate(Date date) {
 		if (date == null) {

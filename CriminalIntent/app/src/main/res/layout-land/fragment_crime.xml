@@ -6,6 +6,9 @@
         <variable
             name="crime"
             type="com.bignerdranch.android.criminalintent.Crime"/>
+        <variable
+            name="eventHandler"
+            type="com.bignerdranch.android.criminalintent.CrimeFragment" />
         <import type="com.bignerdranch.android.criminalintent.DateUtils" />
     </data>
 
@@ -52,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@{DateUtils.formatDate(crime.date)}"
+                android:onClick="@{eventHandler.onDateButtonClick}"
                 />
 
             <CheckBox
