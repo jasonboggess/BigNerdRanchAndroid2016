@@ -17,7 +17,12 @@ public class Crime extends BaseObservable {
 	private boolean solved;
 
 	public Crime() {
-		id = UUID.randomUUID();
+		this(UUID.randomUUID());
+	}
+
+	public Crime(UUID id) {
+
+		this.id = id;
 		date = new Date();
 	}
 

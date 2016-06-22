@@ -66,6 +66,11 @@ public class CrimeListFragment extends Fragment {
 			holder.setCrime(crime);
 		}
 
+		public void setCrimes(List<Crime> crimes) {
+			this.crimes = crimes;
+			notifyDataSetChanged();
+		}
+
 		@Override
 		public int getItemCount() {
 			return crimes.size();
@@ -102,8 +107,7 @@ public class CrimeListFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		binding.crimeRecyclerView.getAdapter().notifyDataSetChanged();
-		updateSubtitle();
+		updateUI();
 	}
 
 	@Override
@@ -147,8 +151,15 @@ public class CrimeListFragment extends Fragment {
 
 	private void updateUI() {
 		CrimeLab crimeLab = CrimeLab.getInstance(getActivity());
-		crimeAdapter = new CrimeAdapter(crimeLab.getCrimes());
-		binding.crimeRecyclerView.setAdapter(crimeAdapter);
+		if (binding.crimeRecyclerView.getAdapter() == null) {
+			crimeAdapter = new CrimeAdapter(crimeLab.getCrimes());
+			binding.crimeRecyclerView.setAdapter(crimeAdapter);
+		} else {
+			CrimeAdapter crimeAdapter = (CrimeAdapter) binding.crimeRecyclerView.getAdapter();
+			crimeAdapter.setCrimes(crimeLab.getCrimes());
+		}
+
+		updateSubtitle();
 	}
 
 	private void updateSubtitle() {
