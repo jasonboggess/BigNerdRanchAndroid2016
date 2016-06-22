@@ -15,6 +15,7 @@ public class Crime extends BaseObservable {
 	private String title;
 	private Date date;
 	private boolean solved;
+	private String suspect;
 
 	public Crime() {
 		this(UUID.randomUUID());
@@ -70,11 +71,26 @@ public class Crime extends BaseObservable {
 		notifyPropertyChanged(com.bignerdranch.android.criminalintent.BR.stringValue);
 	}
 
+	public String getPhotoFilename() {
+		return "IMG_" + getId().toString() + ".jpg";
+	}
+
+
+	@Bindable
+	public String getSuspect() {
+		return suspect;
+	}
+
+	public void setSuspect(String suspect) {
+		this.suspect = suspect;
+		notifyPropertyChanged(com.bignerdranch.android.criminalintent.BR.suspect);
+		notifyPropertyChanged(com.bignerdranch.android.criminalintent.BR.stringValue);
+	}
+
 	@Bindable
 	public String getStringValue() {
 		return this.toString();
 	}
-
 
 	@Override
 	public String toString() {
@@ -83,6 +99,7 @@ public class Crime extends BaseObservable {
 				", title='" + title + '\'' +
 				", date=" + date +
 				", solved=" + solved +
+				", suspect='" + suspect + '\'' +
 				'}';
 	}
 }

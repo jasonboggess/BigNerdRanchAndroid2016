@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.Observable;
+import android.os.Environment;
 
 import com.bignerdranch.android.criminalintent.CrimeDbSchema.CrimeTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -117,7 +119,17 @@ public class CrimeLab extends Observable.OnPropertyChangedCallback {
 		}
 
 		//TODO: Update in batches as this might be very commit heavy
-		updateCrime((Crime)observable);
+		updateCrime((Crime) observable);
+	}
+
+	public File getPhotoFile(Crime crime) {
+		File fileDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+		if (fileDirectory == null) {
+			return null;
+		}
+
+		return new File(fileDirectory, crime.getPhotoFilename());
 	}
 
 
@@ -127,6 +139,7 @@ public class CrimeLab extends Observable.OnPropertyChangedCallback {
 		values.put(CrimeTable.Cols.TITLE, crime.getTitle());
 		values.put(CrimeTable.Cols.DATE, crime.getDate().getTime());
 		values.put(CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0);
+		values.put(CrimeTable.Cols.SUSPECT, crime.getSuspect());
 
 		return values;
 	}
