@@ -20,7 +20,7 @@ public class CrimeLab {
 		this.context = context;
 		crimes = new ArrayList<>();
 
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			Crime crime = new Crime();
 			crime.setTitle(String.format("Crime #%d", i));
 			crime.setSolved(i % 3 == 0);
@@ -47,5 +47,9 @@ public class CrimeLab {
 			}
 		}
 		return null;
+	}
+
+	public void addCrime(Crime crime) {
+		crimes.add(crime);
 	}
 }

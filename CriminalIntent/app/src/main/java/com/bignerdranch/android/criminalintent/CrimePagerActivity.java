@@ -1,6 +1,5 @@
 package com.bignerdranch.android.criminalintent;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -8,13 +7,14 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v7.app.AppCompatActivity;
 
 import com.bignerdranch.android.criminalintent.databinding.ActivityCrimePagerBinding;
 
 import java.util.List;
 import java.util.UUID;
 
-public class CrimePagerActivity extends Activity {
+public class CrimePagerActivity extends AppCompatActivity {
 
 	private static final String EXTRA_CRIME_ID = "om.bignerdranch.android.criminalintent.CrimePagerActivity.crime_id";
 
