@@ -11,7 +11,11 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -40,8 +44,8 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-
-		new FetchItemsTask().execute();
+		setHasOptionsMenu(true);
+		updateItems();
 
 		Handler responseHandler = new Handler();
 
@@ -49,6 +53,8 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 		thumbnailDownloader.setThumbnailDownloadListener(this);
 		thumbnailDownloader.start();
 		thumbnailDownloader.getLooper();
+
+
 	}
 
 	@Nullable
@@ -69,6 +75,48 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 	}
 
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.fragment_photo_gallery, menu);
+
+		MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+		final SearchView searchView = (SearchView) searchItem.getActionView();
+
+		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				QueryPreferences.setStoredQuery(getActivity(), query);
+				searchView.clearFocus();
+				updateItems();
+				return true;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+		});
+		searchView.setOnSearchClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				searchView.setQuery(QueryPreferences.getStoredQuery(getActivity()), false);
+			}
+		});
+
+		if (QueryPreferences.getStoredQuery(getActivity()) != null) {
+			searchView.setIconified(false);
+			searchView.clearFocus();
+		}
+
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		thumbnailDownloader.clearQueue();
+	}
+
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		thumbnailDownloader.quit();
@@ -80,10 +128,39 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 		target.bindGalleryDrawable(drawable);
 	}
 
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_item_clear:
+				QueryPreferences.setStoredQuery(getActivity(), null);
+				updateItems();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void updateItems() {
+		String query = QueryPreferences.getStoredQuery(getActivity());
+		new FetchItemsTask(query).execute();
+	}
+
 	private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+
+		private FlickrFetchr flickrFetchr = new FlickrFetchr();
+		private String query;
+
+		public FetchItemsTask(String query) {
+			this.query = query;
+		}
+
 		@Override
 		protected List<GalleryItem> doInBackground(Void... voids) {
-			return new FlickrFetchr().fetchItems();
+			if (query == null) {
+				return flickrFetchr.fetchRecentPhotos();
+			}
+			return flickrFetchr.searchPhotos(query);
 		}
 
 		@Override
@@ -105,8 +182,12 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 
 		public void bindGalleryDrawable(Drawable drawable) {
 			itemImageView.setImageDrawable(drawable);
+
 		}
+
 	}
+
+	private static Drawable placeHolder;
 
 	private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
 
@@ -114,6 +195,9 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 
 		public PhotoAdapter(List<GalleryItem> galleryItems) {
 			this.galleryItems = galleryItems;
+			if (placeHolder == null) {
+				placeHolder = getResources().getDrawable(R.drawable.loading);
+			}
 		}
 
 		@Override
@@ -126,8 +210,7 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 		@Override
 		public void onBindViewHolder(PhotoHolder holder, int position) {
 			GalleryItem item = galleryItems.get(position);
-			Drawable placeHolder = getResources().getDrawable(R.drawable.bill_up_close);
-			holder.bindGalleryDrawable(placeHolder);
+			holder.bindGalleryDrawable(null);
 			thumbnailDownloader.queueThumbnail(holder, item.getUrl());
 		}
 

@@ -23,6 +23,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 	private boolean hasQuit = false;
 	private Handler requestHandler;
 	private ConcurrentMap<T, String> requestMap = new ConcurrentHashMap<>();
+	private ConcurrentMap<String, Bitmap> photoCache = new ConcurrentHashMap<>();
 
 	private Handler responseHandler;
 	private ThumbnailDownloadListener<T> thumbnailDownloadListener;
@@ -54,11 +55,16 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 		};
 	}
 
+	public void clearQueue() {
+		requestHandler.removeMessages(MESSAGE_DOWNLOAD);
+	}
+
 	@Override
 	public boolean quit() {
 		hasQuit = true;
 		return super.quit();
 	}
+
 
 	public void queueThumbnail(T target, String url) {
 		Log.i(TAG, "Got url " + url);
@@ -79,23 +85,35 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 				return;
 			}
 
+
+			if (photoCache.containsKey(url)) {
+				sendBitmap(url, target, photoCache.get(url));
+				return;
+			}
+
+
 			byte[] bitmapBytes = new FlickrFetchr().getUrlBytes(url);
 			final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
 			Log.i(TAG, "Bitmap Created");
+			photoCache.put(url, bitmap);
+			sendBitmap(url, target, bitmap);
 
-			responseHandler.post(new Runnable() {
-				@Override
-				public void run() {
-					if (!url.equals(requestMap.get(target)) || hasQuit) {
-						return;
-					}
-
-					requestMap.remove(target);
-					thumbnailDownloadListener.onThumbnailDownloaded(target, bitmap);
-				}
-			});
 		} catch (IOException ioe) {
 			Log.e(TAG, "Error downloading image", ioe);
 		}
+	}
+
+	private void sendBitmap(final String url, final T target, final Bitmap thumbnail) {
+		responseHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (!url.equals(requestMap.get(target)) || hasQuit) {
+					return;
+				}
+
+				requestMap.remove(target);
+				thumbnailDownloadListener.onThumbnailDownloaded(target, thumbnail);
+			}
+		});
 	}
 }
