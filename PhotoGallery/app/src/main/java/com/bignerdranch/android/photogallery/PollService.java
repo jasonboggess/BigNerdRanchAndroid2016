@@ -85,8 +85,8 @@ public class PollService extends IntentService {
 
 			Notification notification = new NotificationCompat.Builder(this)
 					.setTicker(resources.getString(R.string.new_pictures_title))
-					.setSmallIcon(R.drawable.bill_up_close)
-					.setContentText(resources.getString(R.string.new_pictures_title))
+					.setSmallIcon(R.mipmap.ic_launcher)
+					.setContentTitle(resources.getString(R.string.new_pictures_title))
 					.setContentText(resources.getString(R.string.new_pictures_text))
 					.setContentIntent(pendingIntent)
 					.setAutoCancel(true)
