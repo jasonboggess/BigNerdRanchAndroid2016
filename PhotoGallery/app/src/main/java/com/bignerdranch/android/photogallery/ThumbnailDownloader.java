@@ -10,12 +10,13 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by jboggess on 6/23/16.
  */
 public class ThumbnailDownloader<T> extends HandlerThread {
-
 
 	private static final String TAG = "ThumbnailDownloader";
 	private static final int MESSAGE_DOWNLOAD = 0;
@@ -28,6 +29,8 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 	private Handler responseHandler;
 	private ThumbnailDownloadListener<T> thumbnailDownloadListener;
 
+	private ExecutorService executorService;
+
 	public interface ThumbnailDownloadListener<T> {
 		void onThumbnailDownloaded(T target, Bitmap thumbnail);
 	}
@@ -35,6 +38,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 	public ThumbnailDownloader(Handler responseHandler) {
 		super(TAG);
 		this.responseHandler = responseHandler;
+		executorService = Executors.newFixedThreadPool(10);
 	}
 
 	public void setThumbnailDownloadListener(ThumbnailDownloadListener<T> thumbnailDownloadListener) {
@@ -78,29 +82,36 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 	}
 
 	public void handleRequest(final T target) {
-		try {
-			final String url = requestMap.get(target);
 
-			if (url == null) {
-				return;
+		executorService.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final String url = requestMap.get(target);
+
+					if (url == null) {
+						return;
+					}
+
+
+					if (photoCache.containsKey(url)) {
+						sendBitmap(url, target, photoCache.get(url));
+						return;
+					}
+
+
+					byte[] bitmapBytes = new FlickrFetchr().getUrlBytes(url);
+					final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+					Log.i(TAG, "Bitmap Created");
+					photoCache.put(url, bitmap);
+					sendBitmap(url, target, bitmap);
+
+				} catch (IOException ioe) {
+					Log.e(TAG, "Error downloading image", ioe);
+				}
 			}
+		});
 
-
-			if (photoCache.containsKey(url)) {
-				sendBitmap(url, target, photoCache.get(url));
-				return;
-			}
-
-
-			byte[] bitmapBytes = new FlickrFetchr().getUrlBytes(url);
-			final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-			Log.i(TAG, "Bitmap Created");
-			photoCache.put(url, bitmap);
-			sendBitmap(url, target, bitmap);
-
-		} catch (IOException ioe) {
-			Log.e(TAG, "Error downloading image", ioe);
-		}
 	}
 
 	private void sendBitmap(final String url, final T target, final Bitmap thumbnail) {
