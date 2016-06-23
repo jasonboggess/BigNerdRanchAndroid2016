@@ -35,6 +35,8 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 	private static final String TAG = PhotoGalleryFragment.class.getSimpleName();
 	private List<GalleryItem> items = new ArrayList<>();
 	private ThumbnailDownloader<PhotoHolder> thumbnailDownloader;
+	private MenuItem searchItem;
+	private SearchView searchView;
 
 	public static PhotoGalleryFragment newInstance() {
 		return new PhotoGalleryFragment();
@@ -47,14 +49,14 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 		setHasOptionsMenu(true);
 		updateItems();
 
+		PollService.setServiceAlarm(getActivity(), true);
+
 		Handler responseHandler = new Handler();
 
 		thumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
 		thumbnailDownloader.setThumbnailDownloadListener(this);
 		thumbnailDownloader.start();
 		thumbnailDownloader.getLooper();
-
-
 	}
 
 	@Nullable
@@ -79,8 +81,8 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.fragment_photo_gallery, menu);
 
-		MenuItem searchItem = menu.findItem(R.id.menu_item_search);
-		final SearchView searchView = (SearchView) searchItem.getActionView();
+		searchItem = menu.findItem(R.id.menu_item_search);
+		searchView = (SearchView) searchItem.getActionView();
 
 		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
@@ -106,6 +108,14 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 		if (QueryPreferences.getStoredQuery(getActivity()) != null) {
 			searchView.setIconified(false);
 			searchView.clearFocus();
+		}
+
+
+		MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
+		if (PollService.isServiceAlarmOn(getActivity())) {
+			toggleItem.setTitle(R.string.stop_polling);
+		} else {
+			toggleItem.setTitle(R.string.start_polling);
 		}
 
 	}
@@ -134,7 +144,14 @@ public class PhotoGalleryFragment extends Fragment implements ThumbnailDownloade
 		switch (item.getItemId()) {
 			case R.id.menu_item_clear:
 				QueryPreferences.setStoredQuery(getActivity(), null);
+				searchView.setQuery(null, false);
+				searchView.setIconified(true);
 				updateItems();
+				return true;
+			case R.id.menu_item_toggle_polling:
+				boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());
+				PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
+				getActivity().invalidateOptionsMenu();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);

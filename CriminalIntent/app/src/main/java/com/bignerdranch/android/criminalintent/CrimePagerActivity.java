@@ -27,6 +27,7 @@ public class CrimePagerActivity extends AppCompatActivity {
 	private static class CrimeFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
 
 		private List<Crime> crimes;
+
 		public CrimeFragmentStatePagerAdapter(List<Crime> crimes, FragmentManager fm) {
 			super(fm);
 			this.crimes = crimes;
